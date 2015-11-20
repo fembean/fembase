@@ -15,6 +15,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import com.fembase.modules.zzb.service.DealIpEmtityService;
+import com.fembase.modules.zzb.service.impl.DealIpEmtityServiceImpl;
+
 public class HttpRequest {
 	 /**
      * 向指定URL发送GET方法的请求
@@ -34,21 +37,22 @@ public class HttpRequest {
             // 打开和URL之间的连接
             URLConnection connection = realUrl.openConnection();
             // 设置通用的请求属性
+            connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded ; charset=UTF-8");
             connection.setRequestProperty("accept", "*/*");
             connection.setRequestProperty("connection", "Keep-Alive");
             connection.setRequestProperty("user-agent",
-                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+                    "Mozilla/5.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
             // 建立实际的连接
             connection.connect();
             // 获取所有响应头字段
             Map<String, List<String>> map = connection.getHeaderFields();
             // 遍历所有的响应头字段
-           for (String key : map.keySet()) {
+            for (String key : map.keySet()) {
                 System.out.println(key + "--->" + map.get(key));
             }
             // 定义 BufferedReader输入流来读取URL的响应
             in = new BufferedReader(new InputStreamReader(
-                    connection.getInputStream(),"UTF-8"));
+                    connection.getInputStream()));
             String line;
             while ((line = in.readLine()) != null) {
                 result += line;
@@ -129,11 +133,11 @@ public class HttpRequest {
         return result;
     }    
     
-    public  void requestIpAction(){
+    public static void main(String arg[]){
     	
-    	System.out.println("begin========================>");
-    	String url="http://www.xicidaili.com/";
+    	DealIpEmtityService service=new DealIpEmtityServiceImpl();
     	
+    	String url="http://www.xicidaili.com/";   	
     	String respon=sendGet(url,"");
     	Pattern p = Pattern.compile("<table[^>]*>[\\s\\S]*</table>"); 
     	//Pattern p = Pattern.compile("(?i)<table[^>]*?>(?:(?!</?table>)[\\s\\S])*?searchForm(?:(?!</?table>)[\\s\\S])*?(?><table[^>]*?>(?<Open>)|</table>(?<-Open>)|(?:(?!</?table\\b)[\\s\\S])*)*(?(Open)(?!))</table>");
@@ -152,13 +156,19 @@ public class HttpRequest {
                 int j=tds.size();
                 if(j>=5){
                 	if("高匿".equals(tds.get(4).text())){
+                		if(service.isExit(tds.get(1).text())){
+                			
+                			System.out.println("已存在 ip="+tds.get(1).text());
+                			continue;
+                		}
                     	IpEmtity emtity=new IpEmtity(tds.get(1).text(), tds.get(2).text(),tds.get(3).text(),tds.get(4).text(), tds.get(5).text(), tds.get(6).text());
-                        System.out.println("获取成功 result=【"+emtity.toString()+"】");
+                       service.inserEmtity(emtity);
+                    	System.out.println("获取成功 result=【"+emtity.toString()+"】");
                 	}
                       }
                 
             }
     	}
-    	System.out.println("end========================>");
+    	
     }
 }
