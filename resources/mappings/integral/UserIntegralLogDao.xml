@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fembase.modules.integral.dao.UserIntegralLogDao">
+    
+	<sql id="userIntegralLogColumns">
+		a.id AS "id",
+		a.uid AS "uid",
+		a.change_num AS "changeNum",
+		a.reason AS "reason",
+		a.detail AS "detail",
+		a.create_date AS "createDate"
+	</sql>
+	
+	<sql id="userIntegralLogJoins">
+	</sql>
+    
+	<select id="get" resultType="UserIntegralLog">
+		SELECT 
+			<include refid="userIntegralLogColumns"/>
+		FROM user_integral_log a
+		<include refid="userIntegralLogJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="UserIntegralLog">
+		SELECT 
+			<include refid="userIntegralLogColumns"/>
+		FROM user_integral_log a
+		<include refid="userIntegralLogJoins"/>
+		<where>
+			
+			<if test="uid != null and uid != ''">
+				AND a.uid = #{uid}
+			</if>
+			<if test="changeNum != null and changeNum != ''">
+				AND a.change_num &gt;= #{changeNum}
+			</if>
+			<if test="reason != null and reason != ''">
+				AND a.reason = #{reason}
+			</if>
+			<if test="detail != null and detail != ''">
+				AND a.detail LIKE 
+					<if test="dbName == 'oracle'">'%'||#{detail}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{detail}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{detail},'%')</if>
+			</if>
+			<if test="beginCreateDate != null and endCreateDate != null and beginCreateDate != '' and endCreateDate != ''">
+				AND a.create_date BETWEEN #{beginCreateDate} AND #{endCreateDate}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="UserIntegralLog">
+		SELECT 
+			<include refid="userIntegralLogColumns"/>
+		FROM user_integral_log a
+		<include refid="userIntegralLogJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO user_integral_log(
+			uid,
+			change_num,
+			reason,
+			detail,
+			create_date
+		) VALUES (
+			#{uid},
+			#{changeNum},
+			#{reason},
+			#{detail},
+			#{createDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE user_integral_log SET 	
+			uid = #{uid},
+			change_num = #{changeNum},
+			reason = #{reason},
+			detail = #{detail}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM user_integral_log
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

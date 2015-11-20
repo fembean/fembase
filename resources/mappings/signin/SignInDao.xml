@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fembase.modules.signin.dao.SignInDao">
+    
+	<sql id="signInColumns">
+		a.uid AS "uid",
+		a.sign_count AS "signinCount",
+		a.last_signin AS "lastSignin",
+		a.continuous AS "continuous",
+		a.can_signin AS "canSignin"
+	</sql>
+	
+	<sql id="signInJoins">
+	</sql>
+    
+	<select id="get" resultType="com.fembase.modules.signin.entity.SignIn">
+		SELECT 
+			<include refid="signInColumns"/>
+		FROM sign_in a
+		<include refid="signInJoins"/>
+		WHERE a.uid = #{uid}
+	</select>
+	
+	<select id="findList" resultType="com.fembase.modules.signin.entity.SignIn">
+		SELECT 
+			<include refid="signInColumns"/>
+		FROM sign_in a
+		<include refid="signInJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="com.fembase.modules.signin.entity.SignIn">
+		SELECT 
+			<include refid="signInColumns"/>
+		FROM sign_in a
+		<include refid="signInJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sign_in(
+			uid,
+			sign_count,
+			last_signin,
+			continuous,
+			can_signin
+		) VALUES (
+			#{uid},
+			#{signinCount},
+			#{lastSignin},
+			#{continuous},
+			#{canSignin}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sign_in SET 	
+			uid = #{uid},
+			sign_count = #{signinCount},
+			last_signin = #{lastSignin},
+			continuous = #{continuous},
+			can_signin = #{canSignin}
+		WHERE uid = #{uid}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sign_in
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

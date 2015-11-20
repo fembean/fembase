@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fembase.modules.shake.dao.UserShakeLogDao">
+    
+	<sql id="userShakeLogColumns">
+		a.id AS "id",
+		a.uid AS "uid",
+		a.award_id AS "awardId",
+		a.cost AS "cost",
+		a.result AS "result",
+		a.create_time AS "createTime"
+	</sql>
+	
+	<sql id="userShakeLogJoins">
+	</sql>
+    
+	<select id="get" resultType="UserShakeLog">
+		SELECT 
+			<include refid="userShakeLogColumns"/>
+		FROM user_shake_log a
+		<include refid="userShakeLogJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="UserShakeLog">
+		SELECT 
+			<include refid="userShakeLogColumns"/>
+		FROM user_shake_log a
+		<include refid="userShakeLogJoins"/>
+		<where>
+			<if test="uid != null and uid != ''">
+				AND a.uid = #{uid}
+			</if>
+			<if test="awardId != null and awardId != ''">
+				AND a.award_id = #{awardId}
+			</if>
+			<if test="cost != null and cost != ''">
+				AND a.cost = #{cost}
+			</if>
+			<if test="result != null and result != ''">
+				AND a.result = #{result}
+			</if>
+			<if test="beginCreateTime != null and endCreateTime != null and beginCreateTime != '' and endCreateTime != ''">
+				AND a.create_time BETWEEN #{beginCreateTime} AND #{endCreateTime}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="UserShakeLog">
+		SELECT 
+			<include refid="userShakeLogColumns"/>
+		FROM user_shake_log a
+		<include refid="userShakeLogJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO user_shake_log(
+			uid,
+			award_id,
+			cost,
+			result,
+			create_time
+		) VALUES (
+			#{uid},
+			#{awardId},
+			#{cost},
+			#{result},
+			#{createTime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE user_shake_log SET 	
+			award_id = #{awardId},
+			cost = #{cost},
+			result = #{result},
+			create_time = #{createTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM user_shake_log
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

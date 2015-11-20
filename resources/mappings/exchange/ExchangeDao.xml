@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fembase.modules.exchange.dao.ExchangeDao">
+    
+	<sql id="exchangeColumns">
+		a.id AS "id",
+		a.uid AS "uid",
+		a.account AS "account",
+		a.real_name AS "realName",
+		a.phone AS "phone",
+		a.email AS "email",
+		a.cash AS "cash",
+		a.need_integral AS "needIntegral",
+		a.state AS "state",
+		a.detail AS "detail",
+		a.create_time AS "createTime",
+		a.update_time AS "updateTime"
+	</sql>
+	
+	<sql id="exchangeJoins">
+	</sql>
+    
+	<select id="get" resultType="Exchange">
+		SELECT 
+			<include refid="exchangeColumns"/>
+		FROM exchange a
+		<include refid="exchangeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Exchange">
+		SELECT 
+			<include refid="exchangeColumns"/>
+		FROM exchange a
+		<include refid="exchangeJoins"/>
+		<where>
+			
+			<if test="uid != null and uid != ''">
+				AND a.uid = #{uid}
+			</if>
+			<if test="account != null and account != ''">
+				AND a.account = #{account}
+			</if>
+			<if test="realName != null and realName != ''">
+				AND a.real_name = #{realName}
+			</if>
+			<if test="phone != null and phone != ''">
+				AND a.phone = #{phone}
+			</if>
+			<if test="email != null and email != ''">
+				AND a.email = #{email}
+			</if>
+			<if test="cash != null and cash != ''">
+				AND a.cash = #{cash}
+			</if>
+			<if test="needIntegral != null and needIntegral != ''">
+				AND a.need_integral &gt;= #{needIntegral}
+			</if>
+			<if test="state != null and state != ''">
+				AND a.state = #{state}
+			</if>
+			<if test="detail != null and detail != ''">
+				AND a.detail LIKE 
+					<if test="dbName == 'oracle'">'%'||#{detail}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{detail}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{detail},'%')</if>
+			</if>
+			<if test="beginCreateTime != null and endCreateTime != null and beginCreateTime != '' and endCreateTime != ''">
+				AND a.create_time BETWEEN #{beginCreateTime} AND #{endCreateTime}
+			</if>
+			<if test="beginUpdateTime != null and endUpdateTime != null and beginUpdateTime != '' and endUpdateTime != ''">
+				AND a.update_time BETWEEN #{beginUpdateTime} AND #{endUpdateTime}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Exchange">
+		SELECT 
+			<include refid="exchangeColumns"/>
+		FROM exchange a
+		<include refid="exchangeJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO exchange(
+			uid,
+			account,
+			real_name,
+			phone,
+			email,
+			cash,
+			need_integral,
+			state,
+			detail,
+			create_time,
+			update_time
+		) VALUES (
+			#{uid},
+			#{account},
+			#{realName},
+			#{phone},
+			#{email},
+			#{cash},
+			#{needIntegral},
+			#{state},
+			#{detail},
+			#{createTime},
+			#{updateTime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE exchange SET 	
+			uid = #{uid},
+			account = #{account},
+			real_name = #{realName},
+			phone = #{phone},
+			email = #{email},
+			cash = #{cash},
+			need_integral = #{needIntegral},
+			state = #{state},
+			detail = #{detail},
+			create_time = #{createTime},
+			update_time = #{updateTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM exchange
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

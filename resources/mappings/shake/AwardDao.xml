@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fembase.modules.shake.dao.AwardDao">
+    
+	<sql id="awardColumns">
+		a.id AS "id",
+		a.mul AS "mul",
+		a.detail AS "detail",
+		a.rate AS "rate",
+		a.state AS "state",
+		a.create_time AS "createTime",
+		a.update_time AS "updateTime"
+	</sql>
+	
+	<sql id="awardJoins">
+	</sql>
+    
+	<select id="get" resultType="Award">
+		SELECT 
+			<include refid="awardColumns"/>
+		FROM award a
+		<include refid="awardJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Award">
+		SELECT 
+			<include refid="awardColumns"/>
+		FROM award a
+		<include refid="awardJoins"/>
+		<where>
+			
+			<if test="mul != null and mul != ''">
+				AND a.mul = #{mul}
+			</if>
+			<if test="detail != null and detail != ''">
+				AND a.detail = #{detail}
+			</if>
+			<if test="rate != null and rate != ''">
+				AND a.rate = #{rate}
+			</if>
+			<if test="state != null and state != ''">
+				AND a.state = #{state}
+			</if>
+			<if test="beginCreateTime != null and endCreateTime != null and beginCreateTime != '' and endCreateTime != ''">
+				AND a.create_time BETWEEN #{beginCreateTime} AND #{endCreateTime}
+			</if>
+			<if test="beginUpdateTime != null and endUpdateTime != null and beginUpdateTime != '' and endUpdateTime != ''">
+				AND a.update_time BETWEEN #{beginUpdateTime} AND #{endUpdateTime}
+			</if>
+		</where>
+		<!-- <choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose> -->
+		ORDER BY a.rate asc
+	</select>
+	
+	<select id="findAllList" resultType="Award">
+		SELECT 
+			<include refid="awardColumns"/>
+		FROM award a
+		<include refid="awardJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO award(
+			mul,
+			detail,
+			rate,
+			state,
+			create_time,
+			update_time
+		) VALUES (
+			#{mul},
+			#{detail},
+			#{rate},
+			#{state},
+			#{createTime},
+			#{updateTime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE award SET 	
+			mul = #{mul},
+			detail = #{detail},
+			rate = #{rate},
+			state = #{state},
+			create_time = #{createTime},
+			update_time = #{updateTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM award
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
