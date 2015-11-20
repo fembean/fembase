@@ -8,10 +8,10 @@ import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 
 public class DBHelper {  
-    public static final String url = "jdbc:mysql://127.0.0.1/student";  
+    public static final String url = "jdbc:mysql://127.0.0.1/fembase";  
     public static final String name = "com.mysql.jdbc.Driver";  
     public static final String user = "root";  
-    public static final String password = "root";  
+    public static final String password = "92ca7056ed";  
   
     public Connection conn = null;  
     public PreparedStatement pst = null;  
